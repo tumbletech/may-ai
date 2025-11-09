@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>May.AI Login</title>
+
+  <!-- Firebase CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ---- Firebase Config ----
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "may-ai-4e746.firebaseapp.com",
+      projectId: "may-ai-4e746",
+      storageBucket: "may-ai-4e746.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ---- Login Logic ----
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("loginForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        try {
+          const userCred = await signInWithEmailAndPassword(auth, email, password);
+          const uid = userCred.user.uid;
+          const userRef = doc(db, "users", uid);
+          const snap = await getDoc(userRef);
+          let role = "student";
+          if (snap.exists()) role = snap.data().role;
+
+          // redirect based on role
+          if (role === "parent") {
+            window.location.href = "/parent-dashboard.html";
+          } else {
+            window.location.href = "/chat.html";
+          }
+        } catch (err) {
+          alert("Login failed: " + err.message);
+        }
+      });
+    });
+  </script>
+
+  <style>
+    body {
+      font-family: Poppins, sans-serif;
+      background: linear-gradient(135deg, #e0e7ff, #f9fafb);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+    h2 { color: #4f46e5; margin-bottom: 1rem; }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.4rem 0;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.8rem;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: #4338ca; }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h2>Welcome to May.AI</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
 
