@@ -133,6 +133,56 @@
       &hide_description=false
       &enable_voice_recording=true">
   </script>
+  <script>
+    // === Voice Recorder Setup ===
+		let mediaRecorder;
+		let audioChunks = [];
+
+		const recordBtn = document.getElementById("recordBtn");
+		const N8N_WEBHOOK = "https://YOUR-N8N-URL/webhook/voice";  // replace with your webhook URL
+
+		recordBtn.addEventListener("click", async () => {
+		  if (!mediaRecorder || mediaRecorder.state === "inactive") {
+  		// Start recording
+  		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  		mediaRecorder = new MediaRecorder(stream);
+
+  		audioChunks = [];
+  		mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+  		mediaRecorder.onstop = async () => {
+    		const blob = new Blob(audioChunks, { type: "audio/webm" });
+    		const formData = new FormData();
+    		formData.append("file", blob, "voice.webm");
+
+    		appendMsg("🎤 Sending voice message...", "user");
+
+    		// Send audio to n8n
+    		const res = await fetch(N8N_WEBHOOK, { method: "POST", body: formData });
+    		const data = await res.json();
+
+    		// Play May's voice reply
+    		if (data.audio_url) {
+      		const audio = new Audio(data.audio_url);
+      		audio.play();
+    		}
+
+    		// Display May's text reply
+    		if (data.text) {
+      		appendMsg(data.text, "may");
+    			}
+  			};
+
+  			mediaRecorder.start();
+  			recordBtn.textContent = "⏹️";
+				} else {
+  			// Stop recording
+  		mediaRecorder.stop();
+  		recordBtn.textContent = "🎤";
+			}
+		});
+
+  </script>
 
 </body>
 </html>
