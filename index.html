@@ -1,92 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>May.AI Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aya's Friend</title>
+    <style>
+        body { font-family: 'Comic Sans MS', cursive, sans-serif; background: #f0f8ff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        
+        /* The Visual Feedback */
+        #avatar { width: 200px; height: 200px; border-radius: 50%; background: #ffcf00; margin-bottom: 20px; transition: transform 0.3s; }
+        .speaking { animation: pulse 1s infinite; }
 
-  <style>
-    body {
-      font-family: Poppins, sans-serif;
-      background: linear-gradient(135deg, #e0e7ff, #f9fafb);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-    }
-    .card {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      width: 320px;
-      text-align: center;
-    }
-    h2 { color: #4f46e5; margin-bottom: 1rem; }
-    input {
-      width: 100%;
-      padding: 0.6rem;
-      margin: 0.4rem 0;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-    button {
-      width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.8rem;
-      background: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button:hover { background: #4338ca; }
-  </style>
+        /* Big Voice Button */
+        #micBtn { width: 150px; height: 150px; border-radius: 50%; border: none; background: #4CAF50; color: white; font-size: 50px; cursor: pointer; box-shadow: 0 10px #2e7d32; }
+        #micBtn:active { box-shadow: 0 5px #2e7d32; transform: translateY(4px); }
+        #micBtn.listening { background: #f44336; box-shadow: 0 10px #c62828; }
+
+        /* Aya's Text Input */
+        #textInput { margin-top: 30px; padding: 15px; width: 300px; border-radius: 25px; border: 2px solid #4CAF50; font-size: 18px; outline: none; }
+        
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
 </head>
-
 <body>
-  <div class="card">
-    <h2>Welcome to May.AI</h2>
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-    </form>
-  </div>
 
-  <script type="module">
-    import { auth, db } from "./firebase-config.js";
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    <div id="avatar"></div>
+    <button id="micBtn">🎤</button>
+    <input type="text" id="textInput" placeholder="Type to Aya's friend here...">
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("loginForm");
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-        try {
-          const userCred = await signInWithEmailAndPassword(auth, email, password);
-          const uid = userCred.user.uid;
-          const userRef = doc(db, "users", uid);
-          const snap = await getDoc(userRef);
-          let role = "student";
-          if (snap.exists()) role = snap.data().role;
-
-          if (role === "parent") {
-            window.location.href = "./parent-dashboard.html";
-          } else {
-            window.location.href = "./chat.html";
-          }
-        } catch (err) {
-          alert("Login failed: " + err.message);
-        }
-      });
-    });
-  </script>
+    <script src="app.js"></script>
 </body>
 </html>
