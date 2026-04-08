@@ -1,33 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aya's Friend</title>
-    <style>
-        body { font-family: 'Comic Sans MS', cursive, sans-serif; background: #f0f8ff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        
-        /* The Visual Feedback */
-        #avatar { width: 200px; height: 200px; border-radius: 50%; background: #ffcf00; margin-bottom: 20px; transition: transform 0.3s; }
-        .speaking { animation: pulse 1s infinite; }
-
-        /* Big Voice Button */
-        #micBtn { width: 150px; height: 150px; border-radius: 50%; border: none; background: #4CAF50; color: white; font-size: 50px; cursor: pointer; box-shadow: 0 10px #2e7d32; }
-        #micBtn:active { box-shadow: 0 5px #2e7d32; transform: translateY(4px); }
-        #micBtn.listening { background: #f44336; box-shadow: 0 10px #c62828; }
-
-        /* Aya's Text Input */
-        #textInput { margin-top: 30px; padding: 15px; width: 300px; border-radius: 25px; border: 2px solid #4CAF50; font-size: 18px; outline: none; }
-        
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>May.AI v2 | Aya's Personal AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Comic+Neue:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
 </head>
 <body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-avatar">M</div>
+        <div class="brand-text">
+          <h1>May.AI v2</h1>
+          <p>Aya’s Personal AI Learning Buddy</p>
+        </div>
+      </div>
 
-    <div id="avatar"></div>
-    <button id="micBtn">🎤</button>
-    <input type="text" id="textInput" placeholder="Type to Aya's friend here...">
+      <div class="mode-switcher">
+        <label for="modeSelect">Mode</label>
+        <select id="modeSelect">
+          <option value="worksheet_helper">Worksheet Helper</option>
+          <option value="reading_buddy">Reading Buddy</option>
+          <option value="math_buddy">Math Buddy</option>
+          <option value="encouragement_mode">Encouragement Mode</option>
+        </select>
+      </div>
+    </header>
 
-    <script src="app.js"></script>
+    <main class="main-layout">
+      <section class="ai-panel">
+        <div class="ai-card">
+          <div class="ai-header">
+            <div class="ai-avatar">🌼</div>
+            <div class="ai-heading">
+              <h2>Hello, Aya!</h2>
+              <p id="aiSubtext">Tap the mic and let’s learn together.</p>
+            </div>
+          </div>
+
+          <div class="status-row">
+            <div class="status-pill" id="statusPill">Ready</div>
+            <div class="lesson-pill" id="lessonPill">Worksheet Helper</div>
+          </div>
+
+          <div class="caption-box" id="captionBox">
+            <p class="caption-label">May.AI says:</p>
+            <div class="caption-text" id="responseText">
+              Hi Aya! Tap the microphone and tell me what you need help with.
+            </div>
+          </div>
+
+          <div class="voice-controls">
+            <button id="micButton" class="mic-button" type="button" aria-label="Start voice input">
+              <span class="mic-icon">🎤</span>
+              <span class="mic-text">Tap to Speak</span>
+            </button>
+
+            <button id="replayButton" class="secondary-button" type="button">
+              🔊 Replay
+            </button>
+          </div>
+
+          <div class="quick-replies">
+            <button class="chip" type="button" data-prompt="Help me with this.">Help me</button>
+            <button class="chip" type="button" data-prompt="Give me a hint please.">Hint please</button>
+            <button class="chip" type="button" data-prompt="Read it to me again.">Read it again</button>
+            <button class="chip" type="button" data-prompt="Let's do the next one.">Next</button>
+            <button class="chip" type="button" data-prompt="Can we try again?">Try again</button>
+          </div>
+        </div>
+
+        <div class="input-card">
+          <h3>Type instead</h3>
+          <p class="input-note">
+            Voice is the main path. Typing is here when needed.
+          </p>
+
+          <div class="text-input-wrap">
+            <textarea
+              id="textInput"
+              rows="3"
+              placeholder="Type your question here..."
+            ></textarea>
+            <button id="sendButton" class="send-button" type="button">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <div class="side-card">
+          <h3>Worksheet Context</h3>
+          <p class="side-note">
+            This helps May.AI stay focused on the current activity.
+          </p>
+
+          <label for="worksheetTopic">Topic</label>
+          <input
+            type="text"
+            id="worksheetTopic"
+            placeholder="Example: CVC words, Addition, Phonics"
+          />
+
+          <label for="worksheetInstruction">Instruction</label>
+          <textarea
+            id="worksheetInstruction"
+            rows="4"
+            placeholder="Example: Circle the picture that starts with the /b/ sound."
+          ></textarea>
+
+          <button id="updateContextButton" class="secondary-button full-width" type="button">
+            Update Context
+          </button>
+        </div>
+
+        <div class="side-card">
+          <h3>Conversation</h3>
+          <div class="conversation-log" id="conversationLog">
+            <div class="log-entry may">
+              <span class="log-role">May.AI</span>
+              <p>Hi Aya! I’m ready to help you learn.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <p>May.AI v2 • Voice-first learning companion for Aya’s Educational Worksheets</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
