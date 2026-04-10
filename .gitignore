@@ -18,6 +18,8 @@ hosting/.cache
 /.firebase/
 /emulator-ui/
 
+*.env
+
 # Logs
 *.log
 npm-debug.log*
